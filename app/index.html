@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0B2545">
+<title>Reuniones · HGP</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap');
+
+:root {
+  --az:  #0B2545;
+  --az2: #163A6B;
+  --az3: #1E4D8C;
+  --vd:  #00A86B;
+  --vd2: #008F5A;
+  --vdl: #E8F8F2;
+  --rj:  #C0392B;
+  --rjl: #FEE8E6;
+  --am:  #D97706;
+  --aml: #FEF3C7;
+  --g0:  #F2F5FA;
+  --g1:  #E4EAF3;
+  --g2:  #C2CFDF;
+  --g3:  #7D90A8;
+  --g4:  #3D526A;
+  --w:   #FFFFFF;
+  --r:   14px;
+  --r2:  9px;
+  --r3:  6px;
+  --sh:  0 1px 6px rgba(11,37,69,.09);
+  --sh2: 0 6px 24px rgba(11,37,69,.14);
+  --t:   .18s cubic-bezier(.4,0,.2,1);
+}
+
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; }
+body { font-family:'Inter',system-ui,sans-serif; background:var(--g0); color:var(--az); min-height:100dvh; }
+
+/* ══ LAYOUT ══ */
+.app { display:flex; flex-direction:column; min-height:100dvh; }
+.topbar {
+  background:var(--az); padding:13px 18px;
+  display:flex; align-items:center; gap:12px;
+  position:sticky; top:0; z-index:100;
+  box-shadow:0 2px 12px rgba(0,0,0,.25);
+}
+.tb-logo { width:32px; height:32px; border-radius:7px; background:var(--vd); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.tb-logo svg { width:17px; height:17px; fill:white; }
+.tb-texts { flex:1; min-width:0; }
+.tb-title { color:white; font-size:13px; font-weight:600; letter-spacing:-.1px; }
+.tb-sub   { color:var(--g2); font-size:11px; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tb-right { display:flex; align-items:center; gap:8px; }
+.av { width:30px; height:30px; border-radius:50%; background:var(--vd2); color:white; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; transition:opacity var(--t); }
+.av:hover { opacity:.8; }
+.content { flex:1; padding:20px 16px 56px; max-width:520px; margin:0 auto; width:100%; }
+
+/* ══ SCREENS ══ */
+.screen { display:none; }
+.screen.on { display:block; animation:fadeUp .22s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(9px)} to{opacity:1;transform:translateY(0)} }
+
+/* ══ CARD ══ */
+.card { background:var(--w); border-radius:var(--r); box-shadow:var(--sh); padding:20px; margin-bottom:14px; }
+.card-label { font-size:10.5px; font-weight:700; letter-spacing:.9px; text-transform:uppercase; color:var(--g3); margin-bottom:14px; display:flex; align-items:center; gap:6px; }
+
+/* ══ FORM ══ */
+.f { margin-bottom:12px; }
+.f label { display:block; font-size:12px; font-weight:500; color:var(--g4); margin-bottom:4px; }
+.f input,.f select,.f textarea {
+  width:100%; padding:10px 13px;
+  border:1.5px solid var(--g1); border-radius:var(--r2);
+  font-family:'Inter',sans-serif; font-size:15px; color:var(--az);
+  background:var(--g0); outline:none;
+  transition:border-color var(--t),box-shadow var(--t),background var(--t);
+}
+.f input:focus,.f select:focus,.f textarea:focus {
+  border-color:var(--vd); background:var(--w);
+  box-shadow:0 0 0 3px rgba(0,168,107,.13);
+}
+.f textarea { resize:vertical; min-height:68px; line-height:1.55; }
+.f input[type=password] { letter-spacing:3px; }
+.f select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237D90A8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:36px; }
+.f-row { display:flex; gap:10px; }
+.f-row .f { flex:1; }
+.req { color:var(--vd); }
+
+/* ══ BOTONES ══ */
+.btn { width:100%; padding:12px 16px; border:none; border-radius:var(--r2); font-family:'Inter',sans-serif; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px; transition:all var(--t); }
+.btn+.btn { margin-top:8px; }
+.btn-p { background:var(--vd); color:white; }
+.btn-p:hover { background:var(--vd2); transform:translateY(-1px); box-shadow:var(--sh2); }
+.btn-p:active { transform:none; box-shadow:none; }
+.btn-s { background:var(--g1); color:var(--g4); }
+.btn-s:hover { background:var(--g2); }
+.btn-d { background:var(--rjl); color:var(--rj); }
+.btn-d:hover { background:#FDDBD9; }
+.btn-o { background:transparent; color:var(--az3); border:1.5px solid var(--az3); }
+.btn-o:hover { background:var(--g1); }
+.btn:disabled { opacity:.4; pointer-events:none; }
+.btn-sm { width:auto; padding:7px 13px; font-size:13px; }
+.sp { width:16px; height:16px; border:2.5px solid rgba(255,255,255,.3); border-top-color:white; border-radius:50%; animation:spin .65s linear infinite; display:none; flex-shrink:0; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.ld .sp { display:block; }
+.ld .bt { display:none; }
+
+/* ══ ALERTS ══ */
+.al { border-radius:var(--r2); font-size:13px; padding:10px 13px; margin-bottom:12px; display:none; align-items:flex-start; gap:8px; line-height:1.5; font-weight:500; }
+.al.on { display:flex; }
+.al-e { background:var(--rjl); color:var(--rj); border:1px solid #F5C6C2; }
+.al-s { background:var(--vdl); color:#065F46; border:1px solid #A7F3D0; }
+.al-i { background:#EFF6FF; color:#1E40AF; border:1px solid #BFDBFE; }
+.al-w { background:var(--aml); color:#92400E; border:1px solid #FDE68A; }
+
+/* ══ MODAL ══ */
+.modal-bg { position:fixed; inset:0; background:rgba(11,37,69,.55); z-index:200; display:none; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(3px); }
+.modal-bg.on { display:flex; animation:fadeIn .18s ease; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+.modal { background:var(--w); border-radius:var(--r); box-shadow:var(--sh2); padding:24px 20px; width:100%; max-width:400px; }
+.modal-title { font-size:16px; font-weight:700; margin-bottom:8px; }
+.modal-body  { font-size:13px; color:var(--g4); line-height:1.6; margin-bottom:20px; }
+
+/* ══ HOME HERO ══ */
+.hero {
+  background:linear-gradient(160deg, var(--az) 0%, var(--az2) 60%, var(--az3) 100%);
+  border-radius:var(--r); padding:28px 22px 24px; margin-bottom:14px;
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-40px; right:-40px;
+  width:180px; height:180px; border-radius:50%;
+  background:rgba(0,168,107,.12); pointer-events:none;
+}
+.hero::after {
+  content:''; position:absolute; bottom:-60px; left:-30px;
+  width:220px; height:220px; border-radius:50%;
+  background:rgba(255,255,255,.04); pointer-events:none;
+}
+.hero-logos { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+.hero-logo-box {
+  width:48px; height:48px; border-radius:10px;
+  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  font-size:10px; color:rgba(255,255,255,.5); text-align:center; line-height:1.3;
+}
+.hero-logo-div { width:1px; height:36px; background:rgba(255,255,255,.2); }
+.hero-inst { color:rgba(255,255,255,.6); font-size:10px; font-weight:500; letter-spacing:.5px; text-transform:uppercase; }
+.hero-name { color:white; font-size:17px; font-weight:700; letter-spacing:-.3px; margin-top:2px; line-height:1.3; }
+.hero-date { color:var(--vd); font-size:12px; font-weight:600; margin-top:12px; display:flex; align-items:center; gap:6px; }
+.hero-date-dot { width:6px; height:6px; border-radius:50%; background:var(--vd); }
+
+/* ══ HOME BUTTONS ══ */
+.home-actions { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+.home-btn {
+  background:var(--w); border-radius:var(--r); box-shadow:var(--sh);
+  padding:18px 20px; border:2px solid transparent;
+  cursor:pointer; transition:all var(--t); text-align:left;
+  display:flex; align-items:center; gap:16px; width:100%;
+}
+.home-btn:hover { border-color:var(--vd); transform:translateY(-2px); box-shadow:var(--sh2); }
+.home-btn:active { transform:none; }
+.home-btn-icon {
+  width:48px; height:48px; border-radius:12px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:22px;
+}
+.home-btn-icon.crear  { background:linear-gradient(135deg,#0B2545,#163A6B); }
+.home-btn-icon.asistir{ background:linear-gradient(135deg,#00A86B,#008F5A); }
+.home-btn-icon svg { width:22px; height:22px; fill:white; }
+.home-btn-texts { flex:1; }
+.home-btn-title { font-size:15px; font-weight:700; color:var(--az); margin-bottom:2px; }
+.home-btn-sub   { font-size:12px; color:var(--g3); line-height:1.4; }
+.home-btn-arrow { color:var(--g2); font-size:18px; }
+
+/* ══ SUPER LINK ══ */
+.super-link {
+  text-align:center; margin-top:4px; padding:8px;
+}
+.super-link a {
+  font-size:11px; color:var(--g3); text-decoration:none;
+  transition:color var(--t); display:inline-flex; align-items:center; gap:4px;
+}
+.super-link a:hover { color:var(--g4); }
+
+/* ══ LOGIN ══ */
+.login-header { margin-bottom:20px; }
+.login-back { display:inline-flex; align-items:center; gap:5px; font-size:13px; color:var(--g3); cursor:pointer; margin-bottom:16px; transition:color var(--t); background:none; border:none; font-family:'Inter',sans-serif; }
+.login-back:hover { color:var(--az); }
+.login-title { font-size:20px; font-weight:700; letter-spacing:-.3px; }
+.login-sub   { font-size:13px; color:var(--g3); margin-top:3px; }
+
+/* ══ REUNIÓN CARD (lista) ══ */
+.reu-item {
+  background:var(--w); border-radius:var(--r); box-shadow:var(--sh);
+  padding:15px 16px; margin-bottom:9px; cursor:pointer;
+  border:2px solid transparent; transition:all var(--t);
+  display:flex; gap:12px; align-items:flex-start;
+}
+.reu-item:hover { border-color:var(--vd); box-shadow:var(--sh2); transform:translateY(-1px); }
+.reu-item.sel   { border-color:var(--vd); background:var(--vdl); }
+.reu-pulse { width:9px; height:9px; border-radius:50%; background:var(--vd); flex-shrink:0; margin-top:5px; box-shadow:0 0 0 3px rgba(0,168,107,.2); }
+.reu-body  { flex:1; min-width:0; }
+.reu-tema  { font-size:14px; font-weight:600; margin-bottom:4px; line-height:1.3; }
+.reu-meta  { font-size:12px; color:var(--g3); line-height:1.6; }
+.reu-badge { font-size:10px; font-weight:700; letter-spacing:.4px; background:var(--vd); color:white; padding:2px 7px; border-radius:20px; flex-shrink:0; margin-top:3px; }
+
+/* ══ CHIP reunión activa ══ */
+.reu-chip {
+  background:linear-gradient(135deg,var(--az) 0%,var(--az2) 100%);
+  border-radius:var(--r); padding:16px 18px; margin-bottom:14px; color:white;
+}
+.reu-chip-tema { font-size:15px; font-weight:700; margin-bottom:6px; line-height:1.3; }
+.reu-chip-rows { display:flex; flex-direction:column; gap:3px; }
+.reu-chip-row  { font-size:12px; color:rgba(255,255,255,.7); display:flex; gap:6px; }
+.reu-chip-row strong { color:white; }
+.reu-chip-code { font-family:monospace; font-size:11px; color:var(--vd); margin-top:8px; letter-spacing:.5px; }
+
+/* ══ STATS ══ */
+.stats { display:flex; gap:10px; margin-bottom:14px; }
+.stat  { flex:1; background:var(--w); border-radius:var(--r2); box-shadow:var(--sh); padding:12px; text-align:center; }
+.stat-n { font-size:26px; font-weight:700; color:var(--vd); line-height:1; }
+.stat-l { font-size:11px; color:var(--g3); margin-top:3px; }
+
+/* ══ ASISTENTE ROW ══ */
+.asis-row { display:flex; align-items:center; gap:10px; padding:9px 11px; background:var(--g0); border-radius:var(--r2); border:1px solid var(--g1); margin-bottom:7px; }
+.asis-av  { width:30px; height:30px; border-radius:50%; background:var(--az); color:white; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.asis-nm  { font-size:13px; font-weight:500; }
+.asis-dt  { font-size:11px; color:var(--g3); font-family:monospace; }
+.asis-tag { font-size:10px; font-weight:700; padding:2px 6px; border-radius:20px; flex-shrink:0; }
+.asis-tag.conv { background:var(--vdl); color:var(--vd2); }
+.asis-tag.adic { background:var(--aml); color:var(--am); }
+.empty-state { text-align:center; padding:28px 16px; color:var(--g3); font-size:13px; line-height:1.7; }
+.empty-icon  { font-size:32px; margin-bottom:10px; }
+
+/* ══ CONVOCADOS selector ══ */
+.conv-search { position:relative; margin-bottom:10px; }
+.conv-search input { width:100%; padding:9px 13px 9px 36px; border:1.5px solid var(--g1); border-radius:var(--r2); font-family:'Inter',sans-serif; font-size:14px; background:var(--g0); outline:none; transition:border-color var(--t); }
+.conv-search input:focus { border-color:var(--vd); }
+.conv-search-icon { position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--g3); font-size:15px; pointer-events:none; }
+.conv-list { max-height:200px; overflow-y:auto; border:1.5px solid var(--g1); border-radius:var(--r2); background:var(--w); }
+.conv-opt  { display:flex; align-items:center; gap:10px; padding:10px 13px; cursor:pointer; transition:background var(--t); border-bottom:1px solid var(--g1); }
+.conv-opt:last-child { border:none; }
+.conv-opt:hover { background:var(--g0); }
+.conv-opt input[type=checkbox] { width:16px; height:16px; accent-color:var(--vd); flex-shrink:0; }
+.conv-opt-name  { font-size:13px; font-weight:500; }
+.conv-opt-cargo { font-size:11px; color:var(--g3); }
+.conv-selected  { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; min-height:24px; }
+.conv-chip {
+  display:inline-flex; align-items:center; gap:5px;
+  background:var(--az); color:white; font-size:12px; font-weight:500;
+  padding:4px 10px; border-radius:20px;
+}
+.conv-chip-x { cursor:pointer; opacity:.7; font-size:14px; line-height:1; }
+.conv-chip-x:hover { opacity:1; }
+
+/* ══ SUPERUSUARIO TABS ══ */
+.su-tabs { display:flex; background:var(--g1); border-radius:var(--r2); padding:4px; gap:4px; margin-bottom:16px; }
+.su-tab  { flex:1; padding:8px; text-align:center; font-size:12px; font-weight:600; border-radius:6px; cursor:pointer; transition:all var(--t); color:var(--g3); border:none; background:none; font-family:'Inter',sans-serif; }
+.su-tab.on { background:var(--w); color:var(--az); box-shadow:var(--sh); }
+
+/* ══ TABLE ══ */
+.tbl-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:12px; }
+th { background:var(--g0); color:var(--g3); font-weight:600; text-transform:uppercase; letter-spacing:.6px; padding:8px 10px; text-align:left; border-bottom:2px solid var(--g1); white-space:nowrap; }
+td { padding:9px 10px; border-bottom:1px solid var(--g1); color:var(--az); vertical-align:middle; }
+tr:last-child td { border:none; }
+tr:hover td { background:var(--g0); }
+.td-acc { display:flex; gap:5px; }
+
+/* ══ TAG ══ */
+.tag { display:inline-block; font-size:10px; font-weight:700; letter-spacing:.3px; padding:2px 7px; border-radius:20px; }
+.tag-a { background:var(--vdl); color:var(--vd2); }
+.tag-c { background:var(--rjl); color:var(--rj); }
+
+/* ══ CONFIRM SCREEN ══ */
+.confirm-icon { width:58px; height:58px; border-radius:50%; background:var(--vdl); margin:0 auto 14px; display:flex; align-items:center; justify-content:center; font-size:26px; }
+.confirm-name  { font-size:18px; font-weight:700; text-align:center; }
+.confirm-cargo { font-size:13px; color:var(--g3); text-align:center; margin-bottom:18px; }
+.confirm-rows  { display:flex; flex-direction:column; gap:0; }
+.c-row { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--g1); font-size:13px; }
+.c-row:last-child { border:none; }
+.c-row span:first-child { color:var(--g3); }
+.c-row span:last-child  { font-weight:600; text-align:right; max-width:200px; }
+
+/* ══ PRINT ══ */
+@media print {
+  body { background:white; font-size:11pt; }
+  .no-print { display:none !important; }
+  .print-only { display:block !important; }
+  .card { box-shadow:none; border:1px solid #ddd; }
+}
+.print-only { display:none; }
+
+/* ══ DIVIDER ══ */
+.dv { height:1px; background:var(--g1); margin:14px 0; }
+.sec-title { font-size:18px; font-weight:700; letter-spacing:-.3px; margin-bottom:3px; }
+.sec-sub   { font-size:13px; color:var(--g3); margin-bottom:18px; line-height:1.5; }
+.back-btn  { display:inline-flex; align-items:center; gap:5px; font-size:13px; color:var(--g3); cursor:pointer; margin-bottom:16px; background:none; border:none; font-family:'Inter',sans-serif; transition:color var(--t); padding:0; }
+.back-btn:hover { color:var(--az); }
+
+/* ══ FECHA FILTER ══ */
+.fecha-filter { display:flex; align-items:center; gap:10px; background:var(--w); border-radius:var(--r2); box-shadow:var(--sh); padding:12px 14px; margin-bottom:14px; }
+.fecha-filter label { font-size:12px; font-weight:500; color:var(--g4); flex-shrink:0; }
+.fecha-filter input { flex:1; padding:6px 10px; border:1.5px solid var(--g1); border-radius:var(--r3); font-family:'Inter',sans-serif; font-size:13px; color:var(--az); background:var(--g0); outline:none; }
+.fecha-filter input:focus { border-color:var(--vd); }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ TOPBAR ══ -->
+<div class="topbar no-print">
+  <div class="tb-logo">
+    <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+  </div>
+  <div class="tb-texts">
+    <div class="tb-title">Registro de Reuniones</div>
+    <div class="tb-sub" id="tbSub">Hospital General Puyo · MSP</div>
+  </div>
+  <div class="tb-right">
+    <div class="av" id="tbAv" style="display:none" onclick="doLogout()" title="Cerrar sesión">?</div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════════════════════════
+     PANTALLA: HOME
+═══════════════════════════════════ -->
+<div class="screen on" id="sHome">
+  <div class="hero">
+    <div class="hero-logos">
+      <div class="hero-logo-box" id="logoMSP">Logo<br>MSP</div>
+      <div class="hero-logo-div"></div>
+      <div class="hero-logo-box" id="logoHGP">Logo<br>HGP</div>
+    </div>
+    <div class="hero-inst">Ministerio de Salud Pública del Ecuador</div>
+    <div class="hero-name">Hospital General Puyo<br>Dirección Provincial de Salud de Pastaza</div>
+    <div class="hero-date"><div class="hero-date-dot"></div><span id="heroFecha">—</span></div>
+  </div>
+
+  <div class="home-actions">
+    <button class="home-btn" onclick="irFlujo('crear')">
+      <div class="home-btn-icon crear">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+      </div>
+      <div class="home-btn-texts">
+        <div class="home-btn-title">Crear reunión</div>
+        <div class="home-btn-sub">Convoca y abre el registro de asistencia</div>
+      </div>
+      <div class="home-btn-arrow">›</div>
+    </button>
+    <button class="home-btn" onclick="irFlujo('asistir')">
+      <div class="home-btn-icon asistir">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      </div>
+      <div class="home-btn-texts">
+        <div class="home-btn-title">Registrar asistencia</div>
+        <div class="home-btn-sub">Marca tu presencia en una reunión activa</div>
+      </div>
+      <div class="home-btn-arrow">›</div>
+    </button>
+  </div>
+
+  <div class="super-link">
+    <a href="#" onclick="irFlujo('super'); return false;" title="Acceso administrador">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+      Administrador
+    </a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANTALLA: LOGIN (compartido)
+═══════════════════════════════════ -->
+<div class="screen" id="sLogin">
+  <div class="login-header">
+    <button class="back-btn" onclick="showScreen('sHome')">← Volver</button>
+    <div class="login-title" id="loginTitle">Ingresar</div>
+    <div class="login-sub"  id="loginSub">Usa tus credenciales institucionales</div>
+  </div>
+  <div class="card">
+    <div class="al al-e" id="alLogin"></div>
+    <div class="f">
+      <label>Usuario <span class="req">*</span></label>
+      <input id="inUser" type="text" placeholder="ej. anaranjo" autocomplete="username" autocapitalize="none" autocorrect="off">
+    </div>
+    <div class="f">
+      <label>Contraseña <span class="req">*</span></label>
+      <input id="inPass" type="password" placeholder="••••••" autocomplete="current-password">
+    </div>
+    <button class="btn btn-p" id="btnLogin" onclick="doLogin()">
+      <div class="sp"></div><span class="bt">Ingresar</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANTALLA: CREAR REUNIÓN
+═══════════════════════════════════ -->
+<div class="screen" id="sCrear">
+  <button class="back-btn no-print" onclick="showScreen('sHome')">← Inicio</button>
+  <div class="sec-title">Nueva reunión</div>
+  <div class="sec-sub">Completa los datos de convocatoria y selecciona los asistentes.</div>
+
+  <div class="card">
+    <div class="card-label">📋 Datos de convocatoria</div>
+    <div class="al al-e" id="alCrear"></div>
+    <div class="al al-s" id="alCrearOk"></div>
+    <div class="f">
+      <label>N.° Memorando / convocatoria</label>
+      <input id="cMemo" type="text" placeholder="ej. MSP-HGP-2026-0123-M">
+    </div>
+    <div class="f">
+      <label>Asunto / tema <span class="req">*</span></label>
+      <input id="cTema" type="text" placeholder="ej. Comité de Farmacia y Terapéutica — Junio 2026">
+    </div>
+    <div class="f-row">
+      <div class="f">
+        <label>Fecha y hora inicio <span class="req">*</span></label>
+        <input id="cFechaI" type="datetime-local">
+      </div>
+      <div class="f">
+        <label>Hora estimada fin <span class="req">*</span></label>
+        <input id="cFechaF" type="datetime-local">
+      </div>
+    </div>
+    <div class="f">
+      <label>Lugar <span class="req">*</span></label>
+      <input id="cLugar" type="text" placeholder="ej. Sala de reuniones — Dirección Asistencial">
+    </div>
+    <div class="f">
+      <label>Convocado por <span class="req">*</span></label>
+      <input id="cConvoca" type="text" placeholder="ej. Director Asistencial (e)">
+    </div>
+    <div class="f">
+      <label>Orden del día</label>
+      <textarea id="cObs" placeholder="1. Apertura&#10;2. Puntos a tratar&#10;3. Varios"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">👥 Convocados <span class="req">*</span></div>
+    <div class="conv-search">
+      <span class="conv-search-icon">🔍</span>
+      <input type="text" id="convBuscar" placeholder="Buscar funcionario..." oninput="filtrarFuncionarios()">
+    </div>
+    <div class="conv-list" id="convLista"></div>
+    <div style="font-size:11px;color:var(--g3);margin-top:8px;margin-bottom:4px;">Seleccionados:</div>
+    <div class="conv-selected" id="convSel"></div>
+  </div>
+
+  <button class="btn btn-p" id="btnCrear" onclick="crearReunion()">
+    <div class="sp"></div><span class="bt">Abrir registro de asistencia</span>
+  </button>
+  <button class="btn btn-s" onclick="showScreen('sHome')">Cancelar</button>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANTALLA: GESTIÓN REUNIÓN (coordinador)
+═══════════════════════════════════ -->
+<div class="screen" id="sGestion">
+  <button class="back-btn no-print" onclick="volverGestion()">← Mis reuniones</button>
+  <div class="reu-chip" id="gChip"></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="gCntConv">0</div><div class="stat-l">Convocados</div></div>
+    <div class="stat"><div class="stat-n" id="gCntAsist">0</div><div class="stat-l">Asistentes</div></div>
+    <div class="stat"><div class="stat-n" id="gEstado" style="font-size:13px;padding-top:5px">—</div><div class="stat-l">Estado</div></div>
+  </div>
+  <div class="card">
+    <div class="card-label">📋 Lista de asistencia</div>
+    <div id="gLista"></div>
+  </div>
+  <div class="no-print" style="display:flex;flex-direction:column;gap:8px;">
+    <button class="btn btn-s" onclick="recargarGestion()">↻ Actualizar</button>
+    <button class="btn btn-o" id="btnImprimir" onclick="solicitarImpresion()">🖨 Imprimir acta</button>
+    <button class="btn btn-d" id="btnCerrarG" onclick="cerrarReunionGestion()">
+      <div class="sp"></div><span class="bt">Cerrar reunión</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANTALLA: MIS REUNIONES (coordinador)
+═══════════════════════════════════ -->
+<div class="screen" id="sMisReu">
+  <button class="back-btn" onclick="showScreen('sHome')">← Inicio</button>
+  <div class="sec-title">Reuniones activas</div>
+  <div class="sec-sub">Selecciona una reunión para gestionarla. Solo puedes editar las que creaste tú.</div>
+  <div class="al al-e" id="alMisReu"></div>
+  <div id="misReuLista"></div>
+  <div id="misReuEmpty" style="display:none">
+    <div class="card"><div class="empty-state"><div class="empty-icon">📭</div>No hay reuniones activas en este momento.</div></div>
+  </div>
+  <button class="btn btn-s" onclick="cargarMisReuniones()">↻ Actualizar</button>
+  <button class="btn btn-p" style="margin-top:8px" onclick="showScreen('sCrear')">+ Crear nueva reunión</button>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANTALLA: RECONFIRMAR CONTRASEÑA
+═══════════════════════════════════ -->
+<div class="screen" id="sReconfirm">
+  <button class="back-btn" onclick="showScreen('sMisReu')">← Volver</button>
+  <div class="sec-title">Confirmar identidad</div>
+  <div class="sec-sub">Para editar o cerrar esta reunión debes reconfirmar tu contraseña.</div>
+  <div class="card">
+    <div class="al al-e" id="alReconf"></div>
+    <div class="f">
+      <label>Contraseña</label>
+      <input id="inReconf" type="password" placeholder="••••••">
+    </div>
+    <button class="btn btn-p" id="btnReconf" onclick="doReconfirm()">
+      <div class="sp"></div><span class="bt">Confirmar y continuar</span>
+    </button>
+    <button class="btn btn-s" onclick="showScreen('sMisReu')">Cancelar</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANTALLA: ASISTIR — lista reuniones
+═══════════════════════════════════ -->
+<div class="screen" id="sAsistir">
+  <button class="back-btn" onclick="showScreen('sHome')">← Inicio</button>
+  <div class="sec-title">Reuniones activas</div>
+  <div class="sec-sub">Selecciona la reunión a la que asististe para registrar tu presencia.</div>
+  <div class="fecha-filter">
+    <label>📅 Fecha</label>
+    <input type="date" id="filtroFecha" onchange="cargarReunionesAsistir()">
+  </div>
+  <div class="al al-e" id="alAsistir"></div>
+  <div id="asistirLista"></div>
+  <div id="asistirEmpty" style="display:none">
+    <div class="card"><div class="empty-state"><div class="empty-icon">📭</div>No hay reuniones activas para esta fecha.</div></div>
+  </div>
+  <button class="btn btn-s" onclick="cargarReunionesAsistir()">↻ Actualizar</button>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANTALLA: CONFIRMACIÓN ASISTENCIA
+═══════════════════════════════════ -->
+<div class="screen" id="sConfirm">
+  <div class="card" style="padding:28px 20px 22px;">
+    <div class="confirm-icon">✅</div>
+    <div class="confirm-name"  id="cfNombre">—</div>
+    <div class="confirm-cargo" id="cfCargo">—</div>
+    <div class="confirm-rows">
+      <div class="c-row"><span>Reunión</span><span id="cfTema">—</span></div>
+      <div class="c-row"><span>Lugar</span><span id="cfLugar">—</span></div>
+      <div class="c-row"><span>Hora de registro</span><span id="cfHora">—</span></div>
+      <div class="c-row"><span>Tipo</span><span id="cfTipo">—</span></div>
+    </div>
+  </div>
+  <div class="al al-s on">✅ Asistencia registrada correctamente. Puedes cerrar esta pantalla.</div>
+  <button class="btn btn-s" onclick="volverAsistir()">← Ver más reuniones</button>
+  <button class="btn btn-s" onclick="showScreen('sHome')">Ir al inicio</button>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANTALLA: SUPERUSUARIO
+═══════════════════════════════════ -->
+<div class="screen" id="sSuper">
+  <button class="back-btn" onclick="showScreen('sHome')">← Inicio</button>
+  <div class="sec-title">Panel de administración</div>
+  <div class="sec-sub" id="suNombrePanel">—</div>
+
+  <div class="su-tabs no-print">
+    <button class="su-tab on" onclick="suTab('usuarios')"   id="stUsuarios">Usuarios</button>
+    <button class="su-tab"    onclick="suTab('funcionarios')" id="stFuncionarios">Funcionarios</button>
+    <button class="su-tab"    onclick="suTab('reuniones')"  id="stReuniones">Reuniones</button>
+  </div>
+
+  <!-- Tab Usuarios -->
+  <div id="suUsuarios">
+    <div class="card">
+      <div class="card-label">👤 Gestión de usuarios</div>
+      <div class="al al-s" id="alUsuOk"></div>
+      <div class="al al-e" id="alUsu"></div>
+      <div class="f"><label>Usuario <span class="req">*</span></label><input id="uUser" type="text" placeholder="ej. anaranjo"></div>
+      <div class="f"><label>Contraseña <span class="req">*</span></label><input id="uPass" type="text" placeholder="mínimo 6 caracteres"></div>
+      <div class="f"><label>Nombre completo <span class="req">*</span></label><input id="uNombre" type="text" placeholder="ej. Alex Andrés Naranjo Andrade"></div>
+      <div class="f"><label>Cargo <span class="req">*</span></label><input id="uCargo" type="text" placeholder="ej. Director Asistencial (e)"></div>
+      <div class="f"><label>Área / servicio</label><input id="uArea" type="text" placeholder="ej. Dirección Asistencial"></div>
+      <div class="f">
+        <label>Perfil <span class="req">*</span></label>
+        <select id="uFlag">
+          <option value="normal">Usuario normal</option>
+          <option value="super">Superusuario</option>
+        </select>
+      </div>
+      <button class="btn btn-p btn-sm" onclick="crearUsuario()" style="width:auto">+ Agregar usuario</button>
+    </div>
+    <div class="card">
+      <div class="card-label">Lista de usuarios</div>
+      <div class="tbl-wrap"><table id="tblUsuarios"><tr><td class="empty-state">Cargando...</td></tr></table></div>
+    </div>
+  </div>
+
+  <!-- Tab Funcionarios -->
+  <div id="suFuncionarios" style="display:none">
+    <div class="card">
+      <div class="card-label">👥 Gestión de funcionarios</div>
+      <div class="al al-s" id="alFuncOk"></div>
+      <div class="al al-e" id="alFunc"></div>
+      <div class="f"><label>Nombre completo <span class="req">*</span></label><input id="fNombre" type="text" placeholder="ej. Juan Pérez López"></div>
+      <div class="f"><label>Cargo <span class="req">*</span></label><input id="fCargo" type="text" placeholder="ej. Médico Residente"></div>
+      <div class="f"><label>Área / servicio</label><input id="fArea" type="text" placeholder="ej. Emergencias"></div>
+      <button class="btn btn-p btn-sm" onclick="crearFuncionario()" style="width:auto">+ Agregar funcionario</button>
+    </div>
+    <div class="card">
+      <div class="card-label">Lista de funcionarios</div>
+      <div class="tbl-wrap"><table id="tblFuncionarios"><tr><td class="empty-state">Cargando...</td></tr></table></div>
+    </div>
+  </div>
+
+  <!-- Tab Reuniones -->
+  <div id="suReuniones" style="display:none">
+    <div class="card">
+      <div class="card-label">📅 Historial de reuniones</div>
+      <div class="tbl-wrap"><table id="tblReuniones"><tr><td class="empty-state">Cargando...</td></tr></table></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /app -->
+
+<!-- ══ MODALES ══ -->
+
+<!-- Modal: imprimir -->
+<div class="modal-bg" id="modalImprimir">
+  <div class="modal">
+    <div class="modal-title">🖨 Imprimir acta</div>
+    <div class="modal-body" id="modalImpBody">La reunión aún está activa. ¿Deseas cerrarla antes de imprimir?</div>
+    <button class="btn btn-p" id="btnImpCerrar" onclick="imprimirConCierre()">Cerrar reunión e imprimir</button>
+    <button class="btn btn-s" onclick="imprimirSinCerrar()">Solo imprimir (reunión continúa activa)</button>
+    <button class="btn btn-s" style="margin-top:4px" onclick="cerrarModal('modalImprimir')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Modal: reconfirmar para gestión -->
+<div class="modal-bg" id="modalReconf">
+  <div class="modal">
+    <div class="modal-title">🔒 Confirmar identidad</div>
+    <div class="modal-body">Ingresa tu contraseña para acceder a la gestión de esta reunión.</div>
+    <div class="al al-e" id="alModalReconf"></div>
+    <div class="f">
+      <input id="inModalReconf" type="password" placeholder="••••••">
+    </div>
+    <button class="btn btn-p" id="btnModalReconf" onclick="doModalReconf()">
+      <div class="sp"></div><span class="bt">Confirmar</span>
+    </button>
+    <button class="btn btn-s" onclick="cerrarModal('modalReconf')">Cancelar</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════
+const CFG = {
+  URL: "https://script.google.com/macros/s/TU_SCRIPT_URL/exec"
+};
+function isDemo() { return CFG.URL.includes("TU_SCRIPT_URL"); }
+
+// ══════════════════════════════════════
+//  DEMO DATA
+// ══════════════════════════════════════
+const DU = {
+  anaranjo:    {pass:"1234", nombre:"Alex Andrés Naranjo Andrade",   cargo:"Director Asistencial (e)",       area:"Dirección Asistencial", flag:"super"},
+  jperez:      {pass:"1234", nombre:"Juan Pérez López",              cargo:"Médico Residente",               area:"Emergencias",           flag:"normal"},
+  mrodriguez:  {pass:"1234", nombre:"María Rodríguez Torres",        cargo:"Enfermera Líder",                area:"Hospitalización",       flag:"normal"},
+  lgomez:      {pass:"1234", nombre:"Luis Gómez Vargas",             cargo:"BQF Farmacéutico",               area:"Farmacia",              flag:"normal"},
+  ccoord:      {pass:"1234", nombre:"Carmen Coordinadora Silva",     cargo:"Jefa de Enfermería",             area:"Enfermería",            flag:"normal"},
+};
+let DF = [
+  {id:1, nombre:"Alex Andrés Naranjo Andrade",  cargo:"Director Asistencial (e)",    area:"Dirección Asistencial", activo:true},
+  {id:2, nombre:"Juan Pérez López",             cargo:"Médico Residente",            area:"Emergencias",           activo:true},
+  {id:3, nombre:"María Rodríguez Torres",       cargo:"Enfermera Líder",             area:"Hospitalización",       activo:true},
+  {id:4, nombre:"Luis Gómez Vargas",            cargo:"BQF Farmacéutico",            area:"Farmacia",              activo:true},
+  {id:5, nombre:"Carmen Coordinadora Silva",    cargo:"Jefa de Enfermería",          area:"Enfermería",            activo:true},
+  {id:6, nombre:"Roberto Andrade Morales",      cargo:"Médico Especialista",         area:"Cirugía",               activo:true},
+  {id:7, nombre:"Lucía Vargas Cevallos",        cargo:"Trabajadora Social",          area:"Trabajo Social",        activo:true},
+];
+let DR = {}; // codigo → reunión
+let DA = {}; // "cod_usuario" → asistencia
+let DFID = 8;
+
+function dApi(p) {
+  if (p.a==="auth") {
+    const u = DU[p.u?.toLowerCase()];
+    if (!u||u.pass!==p.p) return {ok:false,err:"Credenciales incorrectas"};
+    return {ok:true, nombre:u.nombre, cargo:u.cargo, flag:u.flag};
+  }
+  if (p.a==="crearReu") {
+    const cod = "REU-"+(Math.floor(Math.random()*9000)+1000);
+    DR[cod] = {codigo:cod, memo:p.memo, tema:p.tema, fechaI:p.fechaI, fechaF:p.fechaF,
+               lugar:p.lugar, convoca:p.convoca, obs:p.obs,
+               convocados:p.convocados||[], creador:p.creador, ts:p.ts, estado:"Abierta", tsCierre:null};
+    return {ok:true, codigo:cod};
+  }
+  if (p.a==="listarReu") {
+    const hoy = p.fecha||hoyStr();
+    const lista = Object.values(DR).filter(r => {
+      if (r.estado!=="Abierta") return false;
+      if (!p.fecha) return r.fechaI?.startsWith(hoy);
+      return r.fechaI?.startsWith(p.fecha);
+    });
+    return {ok:true, reuniones:lista};
+  }
+  if (p.a==="listarReuAll") {
+    return {ok:true, reuniones:Object.values(DR)};
+  }
+  if (p.a==="listarReuActivas") {
+    return {ok:true, reuniones:Object.values(DR).filter(r=>r.estado==="Abierta")};
+  }
+  if (p.a==="registrarAsist") {
+    const r = DR[p.cod];
+    if (!r) return {ok:false,err:"Reunión no encontrada"};
+    if (r.estado!=="Abierta") return {ok:false,err:"La reunión ya fue cerrada"};
+    const k = p.cod+"_"+p.u;
+    if (DA[k]) return {ok:false,err:"Ya registraste tu asistencia en esta reunión"};
+    const esConv = r.convocados.some(c=>c.nombre===p.nombre);
+    DA[k] = {nombre:p.nombre, cargo:p.cargo, hora:ts(), tipo:esConv?"convocado":"adicional"};
+    return {ok:true, tipo:esConv?"convocado":"adicional", reunion:r};
+  }
+  if (p.a==="listarAsist") {
+    const lista = Object.entries(DA)
+      .filter(([k])=>k.startsWith(p.cod+"_"))
+      .map(([,v])=>v);
+    return {ok:true, asistentes:lista};
+  }
+  if (p.a==="cerrarReu") {
+    const r = DR[p.cod];
+    if (!r) return {ok:false,err:"No encontrada"};
+    r.estado="Cerrada"; r.tsCierre=ts();
+    return {ok:true};
+  }
+  if (p.a==="listarFunc") { return {ok:true, funcionarios:DF.filter(f=>f.activo)}; }
+  if (p.a==="crearFunc") {
+    DF.push({id:DFID++, nombre:p.nombre, cargo:p.cargo, area:p.area||"", activo:true});
+    return {ok:true};
+  }
+  if (p.a==="toggleFunc") {
+    const f = DF.find(x=>x.id===p.id);
+    if (f) f.activo = !f.activo;
+    return {ok:true};
+  }
+  if (p.a==="listarUsers") {
+    return {ok:true, usuarios: Object.entries(DU).map(([u,v])=>({usuario:u, nombre:v.nombre, cargo:v.cargo, flag:v.flag}))};
+  }
+  if (p.a==="crearUser") {
+    DU[p.u] = {pass:p.p, nombre:p.nombre, cargo:p.cargo, area:p.area||"", flag:p.flag||"normal"};
+    return {ok:true};
+  }
+  return {ok:false,err:"Acción desconocida"};
+}
+
+async function api(payload) {
+  if (isDemo()) return dApi(payload);
+  const r = await fetch(CFG.URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+  return r.json();
+}
+
+// ══════════════════════════════════════
+//  ESTADO
+// ══════════════════════════════════════
+let SES = null;
+let FLUJO = null;          // 'crear' | 'asistir' | 'super'
+let ASIS_SEL = null;       // reunión seleccionada por asistente
+let GESTION_REU = null;    // reunión en gestión del coordinador
+let RECONF_CB = null;      // callback tras reconfirmar
+let CONV_SEL = [];         // funcionarios convocados seleccionados
+let GESTION_INTERVALO = null;
+
+// ══════════════════════════════════════
+//  UTILIDADES
+// ══════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
+  document.getElementById(id).classList.add("on");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function al(id,msg,tipo="e") {
+  const el=document.getElementById(id);
+  el.className=`al al-${tipo} on`; el.textContent=msg;
+}
+function alH(id) { document.getElementById(id).classList.remove("on"); }
+function setLd(id,v) { const b=document.getElementById(id); b.classList.toggle("ld",v); b.disabled=v; }
+function ts() { return new Date().toLocaleString("es-EC",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"}); }
+function hoyStr() { return new Date().toISOString().slice(0,10); }
+function fmtDT(s) { if(!s) return "—"; try{return new Date(s).toLocaleString("es-EC",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"})}catch{return s;} }
+function inits(n) { return (n||"?").split(" ").slice(0,2).map(x=>x[0]).join("").toUpperCase(); }
+function cerrarModal(id) { document.getElementById(id).classList.remove("on"); }
+
+// ══════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════
+window.addEventListener("load",()=>{
+  // Fecha hero
+  document.getElementById("heroFecha").textContent = new Date().toLocaleDateString("es-EC",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  // Fecha filtro por defecto = hoy
+  document.getElementById("filtroFecha").value = hoyStr();
+  // Enter en login
+  ["inUser","inPass"].forEach(id=>document.getElementById(id).addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();}));
+  document.getElementById("inModalReconf").addEventListener("keydown",e=>{if(e.key==="Enter")doModalReconf();});
+});
+
+// ══════════════════════════════════════
+//  HOME → FLUJO
+// ══════════════════════════════════════
+function irFlujo(flujo) {
+  FLUJO = flujo;
+  const titles = {crear:"Crear reunión", asistir:"Registrar asistencia", super:"Administrador"};
+  const subs   = {crear:"Ingresa tus credenciales institucionales", asistir:"Ingresa tus credenciales institucionales", super:"Acceso restringido"};
+  document.getElementById("loginTitle").textContent = titles[flujo];
+  document.getElementById("loginSub").textContent   = subs[flujo];
+  alH("alLogin");
+  document.getElementById("inUser").value = "";
+  document.getElementById("inPass").value = "";
+  showScreen("sLogin");
+}
+
+// ══════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════
+async function doLogin() {
+  alH("alLogin");
+  const u = document.getElementById("inUser").value.trim().toLowerCase();
+  const p = document.getElementById("inPass").value;
+  if (!u||!p) { al("alLogin","Ingresa usuario y contraseña"); return; }
+  setLd("btnLogin",true);
+  try {
+    const r = await api({a:"auth",u,p});
+    if (!r.ok) { al("alLogin",r.err||"Credenciales incorrectas"); return; }
+    // Validar superusuario
+    if (FLUJO==="super" && r.flag!=="super") { al("alLogin","No tienes permisos de administrador"); return; }
+    SES = {usuario:u, pass:p, nombre:r.nombre, cargo:r.cargo, flag:r.flag};
+    document.getElementById("tbAv").textContent = inits(r.nombre);
+    document.getElementById("tbAv").style.display = "flex";
+    document.getElementById("tbSub").textContent = r.nombre;
+
+    if (FLUJO==="crear")   irCrear();
+    else if (FLUJO==="asistir") irAsistir();
+    else if (FLUJO==="super")   irSuper();
+  } catch(e) { al("alLogin","Error de conexión."); }
+  finally    { setLd("btnLogin",false); }
+}
+
+// ══════════════════════════════════════
+//  FLUJO CREAR REUNIÓN
+// ══════════════════════════════════════
+async function irCrear() {
+  // Pre-cargar funcionarios para convocados
+  CONV_SEL = [];
+  const now = new Date(); now.setMinutes(now.getMinutes()-now.getTimezoneOffset());
+  document.getElementById("cFechaI").value = now.toISOString().slice(0,16);
+  const fin = new Date(now.getTime()+60*60*1000); fin.setMinutes(fin.getMinutes()-fin.getTimezoneOffset());
+  document.getElementById("cFechaF").value = fin.toISOString().slice(0,16);
+  document.getElementById("cConvoca").value = SES.cargo;
+  ["cMemo","cTema","cLugar","cObs"].forEach(id=>document.getElementById(id).value="");
+  alH("alCrear"); alH("alCrearOk");
+  await cargarFuncionariosSelector();
+  showScreen("sCrear");
+}
+
+async function cargarFuncionariosSelector() {
+  const r = await api({a:"listarFunc"});
+  const lista = r.funcionarios||[];
+  renderConvLista(lista);
+}
+
+function renderConvLista(lista) {
+  const q = document.getElementById("convBuscar").value.toLowerCase();
+  const filtrada = lista.filter(f=>f.nombre.toLowerCase().includes(q)||f.cargo.toLowerCase().includes(q));
+  document.getElementById("convLista").innerHTML = filtrada.length===0
+    ? `<div style="padding:12px;font-size:13px;color:var(--g3);text-align:center">Sin resultados</div>`
+    : filtrada.map(f=>`
+      <div class="conv-opt">
+        <input type="checkbox" id="chk_${f.id}" value="${f.id}" onchange="toggleConv(${f.id},'${f.nombre}','${f.cargo}')" ${CONV_SEL.some(x=>x.id===f.id)?'checked':''}>
+        <div><div class="conv-opt-name">${f.nombre}</div><div class="conv-opt-cargo">${f.cargo} · ${f.area||""}</div></div>
+      </div>`).join("");
+}
+
+let _funcCache = [];
+async function filtrarFuncionarios() {
+  if (_funcCache.length===0) {
+    const r = await api({a:"listarFunc"});
+    _funcCache = r.funcionarios||[];
+  }
+  renderConvLista(_funcCache);
+}
+
+function toggleConv(id,nombre,cargo) {
+  const idx = CONV_SEL.findIndex(x=>x.id===id);
+  if (idx>-1) CONV_SEL.splice(idx,1);
+  else CONV_SEL.push({id,nombre,cargo});
+  renderConvChips();
+}
+
+function renderConvChips() {
+  document.getElementById("convSel").innerHTML = CONV_SEL.length===0
+    ? `<span style="font-size:12px;color:var(--g3)">Ninguno seleccionado</span>`
+    : CONV_SEL.map(c=>`
+      <div class="conv-chip">
+        ${c.nombre.split(" ")[0]}
+        <span class="conv-chip-x" onclick="removeConv(${c.id})">×</span>
+      </div>`).join("");
+}
+
+function removeConv(id) {
+  CONV_SEL = CONV_SEL.filter(x=>x.id!==id);
+  const chk = document.getElementById("chk_"+id);
+  if (chk) chk.checked = false;
+  renderConvChips();
+}
+
+async function crearReunion() {
+  alH("alCrear"); alH("alCrearOk");
+  const memo    = document.getElementById("cMemo").value.trim();
+  const tema    = document.getElementById("cTema").value.trim();
+  const fechaI  = document.getElementById("cFechaI").value;
+  const fechaF  = document.getElementById("cFechaF").value;
+  const lugar   = document.getElementById("cLugar").value.trim();
+  const convoca = document.getElementById("cConvoca").value.trim();
+  const obs     = document.getElementById("cObs").value.trim();
+  if (!tema||!fechaI||!fechaF||!lugar||!convoca) { al("alCrear","Completa los campos obligatorios (*)"); return; }
+  if (CONV_SEL.length===0) { al("alCrear","Selecciona al menos un convocado"); return; }
+  setLd("btnCrear",true);
+  try {
+    const r = await api({a:"crearReu", memo, tema, fechaI, fechaF, lugar, convoca, obs,
+                         convocados:CONV_SEL, creador:SES.nombre, ts:ts()});
+    if (!r.ok) { al("alCrear",r.err||"Error al crear"); return; }
+    al("alCrearOk",`Reunión creada · Código: ${r.codigo}`,"s");
+    // Ir a gestión de la reunión recién creada
+    GESTION_REU = {codigo:r.codigo, memo, tema, fechaI, fechaF, lugar, convoca, obs, convocados:CONV_SEL, creador:SES.nombre, estado:"Abierta"};
+    mostrarGestion();
+  } catch(e) { al("alCrear","Error de conexión."); }
+  finally    { setLd("btnCrear",false); }
+}
+
+// ══════════════════════════════════════
+//  GESTIÓN REUNIÓN (coordinador)
+// ══════════════════════════════════════
+function mostrarGestion() {
+  const r = GESTION_REU;
+  document.getElementById("gChip").innerHTML = `
+    <div class="reu-chip-tema">${r.tema}</div>
+    <div class="reu-chip-rows">
+      ${r.memo?`<div class="reu-chip-row">📄 <strong>${r.memo}</strong></div>`:""}
+      <div class="reu-chip-row">📍 <strong>${r.lugar}</strong></div>
+      <div class="reu-chip-row">🕐 <strong>${fmtDT(r.fechaI)}</strong> — fin est. ${fmtDT(r.fechaF)}</div>
+      <div class="reu-chip-row">👤 <strong>${r.convoca}</strong></div>
+    </div>
+    <div class="reu-chip-code">🔖 ${r.codigo}</div>
+  `;
+  document.getElementById("gCntConv").textContent = r.convocados?.length||0;
+  document.getElementById("gEstado").textContent  = r.estado;
+  document.getElementById("gEstado").style.color  = r.estado==="Abierta"?"var(--vd)":"var(--rj)";
+  document.getElementById("btnCerrarG").style.display = r.estado==="Cerrada"?"none":"flex";
+  const esMia = r.creador===SES.nombre;
+  document.getElementById("btnCerrarG").style.display   = (!esMia||r.estado==="Cerrada")?"none":"flex";
+  document.getElementById("btnImprimir").style.display  = "flex";
+  showScreen("sGestion");
+  recargarGestion();
+  if (GESTION_INTERVALO) clearInterval(GESTION_INTERVALO);
+  if (r.estado==="Abierta") GESTION_INTERVALO = setInterval(recargarGestion,20000);
+}
+
+async function recargarGestion() {
+  if (!GESTION_REU) return;
+  const r = await api({a:"listarAsist", cod:GESTION_REU.codigo});
+  const lista = r.asistentes||[];
+  document.getElementById("gCntAsist").textContent = lista.length;
+  const convs = GESTION_REU.convocados||[];
+  // Sección A: convocados
+  const convRows = convs.map(c=>{
+    const asist = lista.find(a=>a.nombre===c.nombre);
+    return `<div class="asis-row">
+      <div class="asis-av">${inits(c.nombre)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="asis-nm">${c.nombre}</div>
+        <div class="asis-dt">${c.cargo}${asist?" · "+asist.hora:""}</div>
+      </div>
+      ${asist?`<span class="asis-tag conv">✓ Asistió</span>`:`<span class="asis-tag" style="background:var(--rjl);color:var(--rj)">✗ Ausente</span>`}
+    </div>`;
+  }).join("");
+  // Sección B: adicionales
+  const adic = lista.filter(a=>a.tipo==="adicional");
+  const adicRows = adic.length===0?"" : `
+    <div style="font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--g3);margin:12px 0 8px;">Asistentes adicionales</div>
+    ${adic.map(a=>`<div class="asis-row">
+      <div class="asis-av">${inits(a.nombre)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="asis-nm">${a.nombre}</div>
+        <div class="asis-dt">${a.cargo} · ${a.hora}</div>
+      </div>
+      <span class="asis-tag adic">Adicional</span>
+    </div>`).join("")}`;
+  document.getElementById("gLista").innerHTML = convRows + adicRows || `<div class="empty-state"><div class="empty-icon">👥</div>Aún no hay asistentes registrados.</div>`;
+}
+
+async function cerrarReunionGestion() {
+  if (!confirm("¿Confirmas el cierre del registro de asistencia de esta reunión?")) return;
+  setLd("btnCerrarG",true);
+  try {
+    const r = await api({a:"cerrarReu", cod:GESTION_REU.codigo, ts:ts()});
+    if (!r.ok) { alert(r.err||"Error"); return; }
+    GESTION_REU.estado="Cerrada";
+    document.getElementById("gEstado").textContent="Cerrada";
+    document.getElementById("gEstado").style.color="var(--rj)";
+    document.getElementById("btnCerrarG").style.display="none";
+    if (GESTION_INTERVALO) clearInterval(GESTION_INTERVALO);
+  } catch(e) { alert("Error de conexión."); }
+  finally    { setLd("btnCerrarG",false); }
+}
+
+function volverGestion() {
+  if (GESTION_INTERVALO) clearInterval(GESTION_INTERVALO);
+  cargarMisReuniones();
+}
+
+// ── MIS REUNIONES ──
+async function cargarMisReuniones() {
+  showScreen("sMisReu");
+  alH("alMisReu");
+  document.getElementById("misReuLista").innerHTML=`<div class="empty-state">Cargando...</div>`;
+  document.getElementById("misReuEmpty").style.display="none";
+  const r = await api({a:"listarReuActivas"});
+  const lista = r.reuniones||[];
+  if (lista.length===0) {
+    document.getElementById("misReuLista").innerHTML="";
+    document.getElementById("misReuEmpty").style.display="block";
+    return;
+  }
+  document.getElementById("misReuLista").innerHTML = lista.map(reu=>{
+    const esMia = reu.creador===SES.nombre;
+    return `<div class="reu-item" onclick="selReuGestion('${reu.codigo}')">
+      <div class="reu-pulse"></div>
+      <div class="reu-body">
+        <div class="reu-tema">${reu.tema}</div>
+        <div class="reu-meta">📍 ${reu.lugar} · 🕐 ${fmtDT(reu.fechaI)}<br>👤 ${reu.convoca||"—"}</div>
+        ${esMia?`<span style="font-size:10px;color:var(--vd);font-weight:600;margin-top:4px;display:inline-block">✏️ Creada por ti</span>`:`<span style="font-size:10px;color:var(--g3);margin-top:4px;display:inline-block">Solo lectura</span>`}
+      </div>
+      <span class="reu-badge">ACTIVA</span>
+    </div>`;
+  }).join("");
+}
+
+function selReuGestion(codigo) {
+  // Buscar la reunión en demo (en producción haría una consulta)
+  const reu = DR[codigo] || Object.values(DR).find(r=>r.codigo===codigo);
+  if (!reu) return;
+  GESTION_REU = reu;
+  const esMia = reu.creador===SES.nombre;
+  if (esMia) {
+    // Pedir reconfirmación
+    alH("alModalReconf");
+    document.getElementById("inModalReconf").value="";
+    RECONF_CB = () => mostrarGestion();
+    document.getElementById("modalReconf").classList.add("on");
+  } else {
+    // Solo lectura
+    mostrarGestion();
+  }
+}
+
+async function doModalReconf() {
+  alH("alModalReconf");
+  const pass = document.getElementById("inModalReconf").value;
+  setLd("btnModalReconf",true);
+  try {
+    const r = await api({a:"auth",u:SES.usuario,p:pass});
+    if (!r.ok) { al("alModalReconf","Contraseña incorrecta"); return; }
+    cerrarModal("modalReconf");
+    if (RECONF_CB) { RECONF_CB(); RECONF_CB=null; }
+  } catch(e) { al("alModalReconf","Error de conexión."); }
+  finally    { setLd("btnModalReconf",false); }
+}
+
+// ── IMPRESIÓN ──
+function solicitarImpresion() {
+  if (!GESTION_REU) return;
+  if (GESTION_REU.estado==="Cerrada") {
+    ejecutarImpresion();
+  } else {
+    document.getElementById("btnImpCerrar").style.display="flex";
+    document.getElementById("modalImprimir").classList.add("on");
+  }
+}
+async function imprimirConCierre() {
+  cerrarModal("modalImprimir");
+  await cerrarReunionGestion();
+  ejecutarImpresion();
+}
+function imprimirSinCerrar() {
+  cerrarModal("modalImprimir");
+  ejecutarImpresion();
+}
+async function ejecutarImpresion() {
+  await recargarGestion();
+  // Pequeño delay para que el DOM actualice
+  setTimeout(()=>window.print(),300);
+}
+
+// ══════════════════════════════════════
+//  FLUJO ASISTIR
+// ══════════════════════════════════════
+async function irAsistir() {
+  ASIS_SEL = null;
+  document.getElementById("filtroFecha").value = hoyStr();
+  showScreen("sAsistir");
+  await cargarReunionesAsistir();
+}
+
+async function cargarReunionesAsistir() {
+  alH("alAsistir");
+  const fecha = document.getElementById("filtroFecha").value;
+  document.getElementById("asistirLista").innerHTML=`<div class="empty-state">Cargando...</div>`;
+  document.getElementById("asistirEmpty").style.display="none";
+  try {
+    const r = await api({a:"listarReu", fecha});
+    const lista = r.reuniones||[];
+    if (lista.length===0) {
+      document.getElementById("asistirLista").innerHTML="";
+      document.getElementById("asistirEmpty").style.display="block";
+      return;
+    }
+    document.getElementById("asistirLista").innerHTML = lista.map(reu=>`
+      <div class="reu-item" onclick="selReuAsistir(this,'${reu.codigo}')"
+           data-cod="${reu.codigo}" data-tema="${reu.tema}" data-lugar="${reu.lugar}">
+        <div class="reu-pulse"></div>
+        <div class="reu-body">
+          <div class="reu-tema">${reu.tema}</div>
+          <div class="reu-meta">📍 ${reu.lugar}<br>🕐 ${fmtDT(reu.fechaI)} — fin est. ${fmtDT(reu.fechaF)}<br>👤 ${reu.convoca||"—"}</div>
+        </div>
+        <span class="reu-badge">ACTIVA</span>
+      </div>`).join("");
+  } catch(e) { al("alAsistir","Error de conexión."); }
+}
+
+function selReuAsistir(el, codigo) {
+  document.querySelectorAll(".reu-item").forEach(c=>c.classList.remove("sel"));
+  el.classList.add("sel");
+  ASIS_SEL = {codigo, tema:el.dataset.tema, lugar:el.dataset.lugar};
+  let btn = document.getElementById("btnRegistrar");
+  if (!btn) {
+    btn = document.createElement("button");
+    btn.id="btnRegistrar"; btn.className="btn btn-p";
+    btn.innerHTML=`<div class="sp"></div><span class="bt">✔ Registrar mi asistencia</span>`;
+    btn.onclick=registrarAsistencia;
+    document.querySelector("#sAsistir .btn-s").before(btn);
+  }
+  btn.style.display="flex";
+  alH("alAsistir");
+}
+
+async function registrarAsistencia() {
+  if (!ASIS_SEL) return;
+  alH("alAsistir");
+  setLd("btnRegistrar",true);
+  try {
+    const r = await api({a:"registrarAsist", cod:ASIS_SEL.codigo,
+                         u:SES.usuario, nombre:SES.nombre, cargo:SES.cargo, ts:ts()});
+    if (!r.ok) { al("alAsistir",r.err||"Error al registrar"); return; }
+    document.getElementById("cfNombre").textContent = SES.nombre;
+    document.getElementById("cfCargo").textContent  = SES.cargo;
+    document.getElementById("cfTema").textContent   = ASIS_SEL.tema;
+    document.getElementById("cfLugar").textContent  = ASIS_SEL.lugar;
+    document.getElementById("cfHora").textContent   = ts();
+    document.getElementById("cfTipo").textContent   = r.tipo==="convocado"?"✅ Convocado":"➕ Asistente adicional";
+    showScreen("sConfirm");
+  } catch(e) { al("alAsistir","Error de conexión."); }
+  finally    { setLd("btnRegistrar",false); }
+}
+
+function volverAsistir() {
+  ASIS_SEL=null;
+  const btn=document.getElementById("btnRegistrar");
+  if(btn) btn.remove();
+  irAsistir();
+}
+
+// ══════════════════════════════════════
+//  SUPERUSUARIO
+// ══════════════════════════════════════
+async function irSuper() {
+  document.getElementById("suNombrePanel").textContent = `${SES.nombre} · ${SES.cargo}`;
+  showScreen("sSuper");
+  suTab("usuarios");
+}
+
+function suTab(tab) {
+  ["usuarios","funcionarios","reuniones"].forEach(t=>{
+    document.getElementById("su"+t.charAt(0).toUpperCase()+t.slice(1)).style.display = t===tab?"block":"none";
+    document.getElementById("st"+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle("on",t===tab);
+  });
+  if (tab==="usuarios")     cargarTablaUsuarios();
+  if (tab==="funcionarios") cargarTablaFuncionarios();
+  if (tab==="reuniones")    cargarTablaReuniones();
+}
+
+async function cargarTablaUsuarios() {
+  const r = await api({a:"listarUsers"});
+  const lista = r.usuarios||[];
+  document.getElementById("tblUsuarios").innerHTML = `
+    <tr><th>Usuario</th><th>Nombre</th><th>Cargo</th><th>Perfil</th></tr>
+    ${lista.map(u=>`<tr>
+      <td><code style="font-family:monospace;font-size:11px">${u.usuario}</code></td>
+      <td>${u.nombre}</td><td style="font-size:11px">${u.cargo}</td>
+      <td><span class="tag ${u.flag==="super"?"tag-c":"tag-a"}">${u.flag==="super"?"SUPER":"Normal"}</span></td>
+    </tr>`).join("")}`;
+}
+
+async function crearUsuario() {
+  alH("alUsu"); alH("alUsuOk");
+  const u=document.getElementById("uUser").value.trim().toLowerCase();
+  const p=document.getElementById("uPass").value.trim();
+  const n=document.getElementById("uNombre").value.trim();
+  const c=document.getElementById("uCargo").value.trim();
+  const a=document.getElementById("uArea").value.trim();
+  const f=document.getElementById("uFlag").value;
+  if(!u||!p||!n||!c){al("alUsu","Completa los campos obligatorios");return;}
+  const r = await api({a:"crearUser",u,p,nombre:n,cargo:c,area:a,flag:f});
+  if(!r.ok){al("alUsu",r.err||"Error");return;}
+  al("alUsuOk","Usuario creado correctamente","s");
+  ["uUser","uPass","uNombre","uCargo","uArea"].forEach(id=>document.getElementById(id).value="");
+  cargarTablaUsuarios();
+}
+
+async function cargarTablaFuncionarios() {
+  const r = await api({a:"listarFunc"});
+  const lista = r.funcionarios||[];
+  _funcCache = lista;
+  document.getElementById("tblFuncionarios").innerHTML = `
+    <tr><th>Nombre</th><th>Cargo</th><th>Área</th><th>Estado</th></tr>
+    ${lista.map(f=>`<tr>
+      <td>${f.nombre}</td><td style="font-size:11px">${f.cargo}</td>
+      <td style="font-size:11px;color:var(--g3)">${f.area||"—"}</td>
+      <td><span class="tag ${f.activo?"tag-a":"tag-c"}" style="cursor:pointer" onclick="toggleFuncionario(${f.id})">${f.activo?"Activo":"Inactivo"}</span></td>
+    </tr>`).join("")}`;
+}
+
+async function crearFuncionario() {
+  alH("alFunc"); alH("alFuncOk");
+  const n=document.getElementById("fNombre").value.trim();
+  const c=document.getElementById("fCargo").value.trim();
+  const a=document.getElementById("fArea").value.trim();
+  if(!n||!c){al("alFunc","Nombre y cargo son obligatorios");return;}
+  const r = await api({a:"crearFunc",nombre:n,cargo:c,area:a});
+  if(!r.ok){al("alFunc",r.err||"Error");return;}
+  al("alFuncOk","Funcionario agregado correctamente","s");
+  _funcCache=[];
+  ["fNombre","fCargo","fArea"].forEach(id=>document.getElementById(id).value="");
+  cargarTablaFuncionarios();
+}
+
+async function toggleFuncionario(id) {
+  await api({a:"toggleFunc",id});
+  cargarTablaFuncionarios();
+}
+
+async function cargarTablaReuniones() {
+  const r = await api({a:"listarReuAll"});
+  const lista = r.reuniones||[];
+  document.getElementById("tblReuniones").innerHTML = lista.length===0
+    ? `<tr><td class="empty-state">Sin reuniones registradas</td></tr>`
+    : `<tr><th>Código</th><th>Tema</th><th>Fecha</th><th>Estado</th><th></th></tr>
+       ${lista.map(r=>`<tr>
+         <td><code style="font-family:monospace;font-size:11px">${r.codigo}</code></td>
+         <td style="font-size:12px">${r.tema}</td>
+         <td style="font-size:11px;white-space:nowrap">${fmtDT(r.fechaI)}</td>
+         <td><span class="tag ${r.estado==="Abierta"?"tag-a":"tag-c"}">${r.estado}</span></td>
+         <td>
+           <div class="td-acc">
+             ${r.estado==="Abierta"?`<button class="btn btn-sm btn-d" onclick="suCerrarReu('${r.codigo}')">Cerrar</button>`:""}
+             <button class="btn btn-sm btn-s" onclick="suVerReu('${r.codigo}')">Ver</button>
+           </div>
+         </td>
+       </tr>`).join("")}`;
+}
+
+async function suCerrarReu(cod) {
+  if(!confirm("¿Cerrar esta reunión?")) return;
+  await api({a:"cerrarReu",cod,ts:ts()});
+  cargarTablaReuniones();
+}
+
+function suVerReu(cod) {
+  const reu = DR[cod]||Object.values(DR).find(r=>r.codigo===cod);
+  if (!reu) return;
+  GESTION_REU = reu;
+  mostrarGestion();
+}
+
+// ══════════════════════════════════════
+//  LOGOUT
+// ══════════════════════════════════════
+function doLogout() {
+  if (!confirm("¿Cerrar sesión?")) return;
+  SES=null; ASIS_SEL=null; GESTION_REU=null; CONV_SEL=[];
+  if(GESTION_INTERVALO) clearInterval(GESTION_INTERVALO);
+  document.getElementById("tbAv").style.display="none";
+  document.getElementById("tbSub").textContent="Hospital General Puyo · MSP";
+  showScreen("sHome");
+}
+</script>
+</body>
+</html>
