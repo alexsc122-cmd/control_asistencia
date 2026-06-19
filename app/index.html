@@ -757,7 +757,9 @@ function dApi(p) {
 
 async function api(payload) {
   if (isDemo()) return dApi(payload);
-  const r = await fetch(CFG.URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+  // Content-Type text/plain evita el preflight CORS que Google Apps Script no maneja bien.
+  // El backend (Code.gs) igual parsea el body como JSON normalmente.
+  const r = await fetch(CFG.URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
   return r.json();
 }
 
